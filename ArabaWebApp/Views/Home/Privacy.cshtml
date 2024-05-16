@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div class="d-flex justify-content-end">
+    <button type="submit" value="ekle" class="btn btn-success w-25 ">
+        Ekle
+    </button>
+</div>
+<table id="tblArabalar" class="table table-dark">
+    <thead>
+        <tr>
+            <td>
+                Id
+            </td>
+            <td>
+                Marka
+            </td>
+            <td>
+                Fiyat
+            </td>
+            <td>
+                İkinci El
+            </td>
+            <td>
+                Islemler
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+
+</table>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js">  </script>
+<script>
+
+    $(document).ready(function () {
+        $.ajax({
+            url: "https://localhost:7106/Home/ArabaListele",
+            type: "get",
+            datatype: "JSON",
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                $.each(data, function (i, araba) {
+                    let arabaSatiri = "<tr>" +
+                        "<td>" + araba.id + "</td>" +
+                        "<td>" + araba.marka + "</td>" +
+                        "<td>" + araba.fiyat + "</td>" +
+                        "<td>" + araba.ikinciEl + "</td>" +
+                        "<td> <button class='btn btn-secondary' id='detay" + i + "' onclick='Detay(" + araba.id + ")'> Detay </button> " +
+                        " <button class='btn btn-danger' id='Sil" + i +"' onclick='Sil(" + araba.id + ")'> Sil </button> " +
+                        " <button class='btn btn-primary' id='duzenle" + i + "' onclick='VeriAktar(" + araba.id + ")'> Düzenle </button> " +
+                        "</td> </tr>";
+                    $("#tblArabalar tbody").append(arabaSatiri);
+                });
+            },
+            error: function () {
+                alert("Hata oluştu!");
+            }
+        });
+    });
+
+
+    function Sil(id) {
+        /*let id = $("#txtIdSil").val();*/
+
+        $.ajax({
+            url: "/Home/Sil/" + id,
+            type: "POST",
+            success: function () {
+                alert("İlgili araba silindi.");
+                location.reload("/Home/Privacy");
+            },
+            error: function () {
+                alert("Hata oluştu");
+            }
+
+        });
+
+    }
+    
+</script>
