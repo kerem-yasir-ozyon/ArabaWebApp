@@ -3,36 +3,124 @@
 }
 <h1>@ViewData["Title"]</h1>
 
-<div class="d-flex justify-content-end">
-    <button type="submit" value="ekle" class="btn btn-success w-25 ">
-        Ekle
-    </button>
-</div>
+
 <table id="tblArabalar" class="table table-dark">
-    <thead>
-        <tr>
-            <td>
-                Id
-            </td>
-            <td>
-                Marka
-            </td>
-            <td>
-                Fiyat
-            </td>
-            <td>
-                İkinci El
-            </td>
-            <td>
-                Islemler
-            </td>
-        </tr>
-    </thead>
     <tbody>
+        <thead>
+            <tr>
+                <td>
+                    Id
+                </td>
+                <td>
+                    Marka
+                </td>
+                <td>
+                    Fiyat
+                </td>
+                <td>
+                    İkinci El
+                </td>
+                <td>
+                    Islemler
+                </td>
+            </tr>
+        </thead>
+    
     </tbody>
 
 </table>
 
+<p>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        Araba Ekle
+    </button>
+</p>
+<div style="min-height: 120px;">
+    <div class="collapse collapse-horizontal" id="collapseWidthExample">
+        <div class="card card-body" style="width: 300px;">
+
+                <table>
+
+                    <tbody>
+
+                        <tr class="mb-3">
+                            <td>Marka</td>
+                            <td><input id="txtMarka" /></td>
+                        </tr>
+
+                        <tr>
+                            <td>Fiyat</td>
+                            <td><input id="txtFiyat" /></td>
+                        </tr>
+
+                        <tr>
+                            <td>IkinciEl</td>
+                            <td><input type="checkbox" id="chcDurum" /></td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <button type="submit" class="btn btn-success" onclick="Ekle()">Ekle</button>         
+                
+        </div>
+    </div>
+</div>
+
+
+<!-- The Modal -->
+<div class="modal" id="guncellemePenceresi">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Güncelleme Ekranı</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <table>
+
+                    <tr>
+                        <td>Id:</td>
+                        <td><input id="txtId" readonly/></td>
+                    </tr>
+
+                    <tr>
+                        <td>Marka:</td>
+                        <td><input id="txtGuncelMarka"  /></td>
+                    </tr>
+
+                    <tr>
+                        <td>Fiyat:</td>
+                        <td><input id="txtGuncelFiyat" /></td>
+                    </tr>
+
+                    <tr>
+                        <td>IkıncıEl:</td>
+                        <td><input type="checkbox" id="chcGuncelIkinciEl" /></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <button onclick="Guncelle($('#txtId').val())" class="btn btn-warning" id="btnGuncelle">Guncelle</button>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Kapat</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js">  </script>
 <script>
@@ -51,8 +139,8 @@
                         "<td>" + araba.fiyat + "</td>" +
                         "<td>" + araba.ikinciEl + "</td>" +
                         "<td> <button class='btn btn-secondary' id='detay" + i + "' onclick='Detay(" + araba.id + ")'> Detay </button> " +
-                        " <button class='btn btn-danger' id='Sil" + i +"' onclick='Sil(" + araba.id + ")'> Sil </button> " +
-                        " <button class='btn btn-primary' id='duzenle" + i + "' onclick='VeriAktar(" + araba.id + ")'> Düzenle </button> " +
+                        " <button class='btn btn-danger' id='Sil" + i + "' onclick='Sil(" + araba.id + ")'> Sil </button> " +
+                        " <button data-bs-toggle='modal' data-bs-target='#guncellemePenceresi' class='btn btn-primary' id = 'duzenle" + i + "' onclick = 'VeriAktar(" + araba.id + ")' > Düzenle </button> " +
                         "</td> </tr>";
                     $("#tblArabalar tbody").append(arabaSatiri);
                 });
@@ -65,7 +153,6 @@
 
 
     function Sil(id) {
-        /*let id = $("#txtIdSil").val();*/
 
         $.ajax({
             url: "/Home/Sil/" + id,
@@ -81,5 +168,92 @@
         });
 
     }
-    
+
+    function Ekle() 
+    {
+        
+        let araba = 
+        {
+            marka: $("#txtMarka").val(),
+            fiyat: $("#txtFiyat").val(),
+            ikinciEl: $("#chcDurum").is(":checked")
+        };
+
+        $.ajax
+        ({
+
+                url: "https://localhost:7106/Home/Ekle",
+                type:"Post",
+                data:araba,
+
+                success: function(){
+                    alert("Başarılı bir şekilde eklenmiştir.")
+                    location.reload("/Home/Privacy");
+                },
+                error: function () {
+                    alert("Başarısız araba eklenememiştir.")
+                }
+
+
+        })
+
+    }
+
+    function VeriAktar(id) 
+    {
+
+        $.ajax
+            ({
+
+                url: "https://localhost:7106/Home/IdyeGoreGetir?id=" + id,
+                type: "Get",
+                datatype: "JSON",
+                contentType: "application/json;charset=utf-8",
+
+                success: function (data) 
+                {
+                    $("#txtId").val(data.id);
+                    $("#txtGuncelMarka").val(data.marka);
+                    $("#txtGuncelFiyat").val(data.fiyat);
+                    $("#chcGuncelIkıncıEl").prop("checked", data.ikinciEl);
+                },
+                error: function () {
+                    alert("Hata Olustuuuuuu.");
+                }
+
+            });    
+
+    }
+
+
+    function Guncelle(id) {
+
+        let guncelOzellikleriTemsilEden =
+        {
+            marka: $("#txtGuncelMarka").val(),
+            fiyat: $("#txtGuncelFiyat").val(),
+            ikinciEl: $("#chcGuncelIkinciEl").is(":checked")
+        };
+
+        $.ajax
+            ({
+
+                url: "https://localhost:7106/Home/Guncelle/" + id,
+                type: "Post",
+                data: guncelOzellikleriTemsilEden,
+
+                success: function () 
+                {
+                    alert("Başarılı bir şekilde guncellenmıstır.");
+                    location.reload("/Home/Privacy");
+                },
+                error: function () 
+                {
+                    alert("Hata olustu")
+                }
+
+            });
+
+    }
+
 </script>

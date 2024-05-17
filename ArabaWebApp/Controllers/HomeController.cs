@@ -46,6 +46,32 @@ namespace ArabaWebApp.Controllers
             return RedirectToAction("Privacy");
         }
 
+        [HttpPost]
+        public IActionResult Ekle(Araba araba)
+        {
+            _db.Arabalar.Add(araba);
+            _db.SaveChanges();
+
+            return new EmptyResult();
+        }
+
+        public IActionResult IdyeGoreGetir(int id)
+        {
+            return Json(_db.Arabalar.Find(id));
+        }
+
+        public IActionResult Guncelle(int id, Araba araba)
+        {
+            var guncellenecekAraba = _db.Arabalar.Find(id);
+            guncellenecekAraba.Marka = araba.Marka;
+            guncellenecekAraba.Fiyat = araba.Fiyat;
+            guncellenecekAraba.IkinciEl = araba.IkinciEl;
+
+            _db.Arabalar.Update(guncellenecekAraba);
+            _db.SaveChanges();
+
+            return new EmptyResult();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
